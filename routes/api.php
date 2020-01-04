@@ -22,7 +22,9 @@ Route::post('auth', 'UserController@login');
 Route::post('register', 'UserController@register');
 
 Route::group(['middleware' => ['jwt.verify']], function(){
-	Route::get('/user', 'UserController@users');
+	Route::get('/user', 'UserController@index');
+	Route::get('/user/{id}', 'UserController@show');
+	Route::put('/user/{id}', 'UserController@edit');
 
 	Route::get('/movie', 'MovieController@index');
 	Route::post('/movie', 'MovieController@store');

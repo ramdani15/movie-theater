@@ -12,6 +12,71 @@ use App\User;
 
 class UserController extends Controller
 {
+    public function index(Request $request){
+        if(app(PermissionController::class)->isAdmin($request->user()->role)){
+            $user = User::all();
+        } else if(app(PermissionController::class)->isStaff($request->user()->role)){
+            $user = User::where('role', '!=', 'admin')->get();
+        } else {
+            $user = User::find($request->user()->_id);
+        }
+        return $user;
+    }
+
+    public function show(Request $request, $id){
+        if(app(PermissionController::class)->isAdmin($request->user()->role)){
+            $user = User::find($id);
+        } else if(app(PermissionController::class)->isStaff($request->user()->role)){
+            $user = User::where('_id', $id)
+                        ->where('role', '!=', 'admin')->get();
+        } else {
+            $user = User::where('_id', $id)
+                        ->where('_id', $request->user()->_id)->get();
+        }
+        return $user;
+    }
+
+    public function edit(Request $request, $id){
+        if(app(PermissionController::class)->usersPermission($request->user()->username, $id)){
+            $validator = Validator::make($request->all(), [
+                'username' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255',
+                'password' => 'required|string',
+                'role' => 'required|string',
+            ]);
+
+            if($validator->fails()){
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+
+            // exist username
+            $username = $request->username;
+            $email = $request->email;
+            $user = User::where('_id', '!=', $id)
+                        ->where(function($q) use ($username, $email) {
+                              $q->where('username', $username)
+                                ->orWhere('email', $email);
+                          })->get();
+            if(!$user->isEmpty()){
+                return response()->json(['status' => 'Username or Email exist'], 400);
+            }
+
+            User::where('_id', $id)->update([
+                'username' => $request->get('username'),
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'role' => $request->get('role'),
+                'password' => Hash::make($request->get('password')),
+            ]);
+
+            $user = User::find($id);
+
+            return $user;
+        }
+        return response()->json(["status" => 'You don\'t have permission'], 403);
+    }
+
     public function login(Request $request){
         $credentials = $request->only('username', 'password');
 
@@ -23,7 +88,6 @@ class UserController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
-        // return response()->json(compact('token'));
         return response()->json([
         	'token' => $token,
         	'username' => $request->user()->username,
@@ -50,7 +114,6 @@ class UserController extends Controller
         // exist username
         $user = User::where('username', $request->username)
                     ->orWhere('email', $request->email)->get();
-        // dd($user);
         if(!$user->isEmpty()){
             return response()->json(['status' => 'Username or Email exist'], 400);
         }
@@ -66,17 +129,6 @@ class UserController extends Controller
         $token = JWTAuth::fromUser($user);
 
         return response()->json(compact('user','token'),201);
-    }
-
-    public function users(Request $request){
-        if(app(PermissionController::class)->isAdmin($request->user()->role)){
-            $user = User::all();
-        } else if(app(PermissionController::class)->isStaff($request->user()->role)){
-            $user = User::where('role', '!=', 'admin')->get();
-        } else {
-            $user = User::find($request->user()->_id);
-        }
-    	return $user;
     }
 
     public function getAuthenticatedUser(){

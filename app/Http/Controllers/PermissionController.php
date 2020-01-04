@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\User;
+
 class PermissionController extends Controller
 {
     public function isAdmin($role){
@@ -32,5 +34,28 @@ class PermissionController extends Controller
     		return true;
     	}
     	return false;
+    }
+
+    public function usersPermission($username, $user_id){
+        $user = User::find($user_id);
+        $owner = User::where('username', $username)->first();
+        if($user != null || $owner != null){
+            if(Self::isCustomer($user->role)){
+                if(Self::addShows($owner->role) || $user->_id == $owner->_id){
+                    return true;
+                }
+            } else if(Self::isStaff($user->role)){
+                if(Self::isAdmin($owner->role) || $user->_id == $owner->_id){
+                    return true;
+                }
+            } else if(Self::isAdmin($user->role)){
+                if($user->_id == $owner->_id){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return abort(404);
+
     }
 }
