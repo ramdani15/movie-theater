@@ -93,6 +93,10 @@ return [
             'username' => env('MONGO_DB_USERNAME'),
             'password' => env('MONGO_DB_PASSWORD'),
             'options'  => []
+
+            // config for heroku
+            // 'dsn'=>'mongodb+srv://ramdani:masuk123@cluster0-swvm2.mongodb.net/movie_theater?retryWrites=true&w=majority',
+            // 'database' => 'movie_theater',
         ],
 
     ],
