@@ -53,6 +53,6 @@ Route::group(['middleware' => ['jwt.verify']], function(){
 	Route::get('/ticket', 'TicketController@index');
 	Route::post('/ticket', 'TicketController@store');
 	Route::get('/ticket/{id}', 'TicketController@show');
-	Route::put('/ticket/{id}', 'Ticketontroller@edit');
+	Route::put('/ticket/{id}', 'TicketController@edit');
 	Route::delete('/ticket/{id}', 'TicketController@destroy');
 });
