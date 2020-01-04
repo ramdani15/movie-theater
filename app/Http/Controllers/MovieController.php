@@ -14,7 +14,8 @@ class MovieController extends Controller
     }
 
     public function store(Request $request){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->isSuper($request->user()->role) ||
+    		app(PermissionController::class)->isAdmin($request->user()->role)){
     		$validator = Validator::make($request->all(), [
 	            'title' => 'required|string|max:255',
 	            'genre' => 'required|string|max:255',
@@ -39,7 +40,8 @@ class MovieController extends Controller
     }
 
     public function edit(Request $request, $id){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->isSuper($request->user()->role) ||
+    		app(PermissionController::class)->isAdmin($request->user()->role)){
     		$validator = Validator::make($request->all(), [
 	            'title' => 'required|string|max:255',
 	            'genre' => 'required|string|max:255',
@@ -60,7 +62,8 @@ class MovieController extends Controller
     }
 
     public function destroy(Request $request, $id){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->isSuper($request->user()->role) ||
+    		app(PermissionController::class)->isAdmin($request->user()->role)){
 	        Movies::destroy($id);
 
 	        return response()->json(["status" => 'Deleted'], 200);

@@ -109,7 +109,8 @@ class TicketController extends Controller
     }
 
     public function destroy(Request $request, $id){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->isSuper($request->user()->role) ||
+    		app(PermissionController::class)->isAdmin($request->user()->role)){
 	        Tickets::destroy($id);
 
 	        return response()->json(["status" => 'Deleted'], 200);

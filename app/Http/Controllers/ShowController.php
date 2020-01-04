@@ -57,7 +57,8 @@ class ShowController extends Controller
     }
 
     public function edit(Request $request, $id){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->isSuper($request->user()->role) ||
+    		app(PermissionController::class)->isAdmin($request->user()->role)){
     		$validator = Validator::make($request->all(), [
 	            'date' => 'required|date',
 	            'start_time' => 'required|date_format:H:i',
@@ -93,7 +94,8 @@ class ShowController extends Controller
     }
 
     public function destroy(Request $request, $id){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->isSuper($request->user()->role) ||
+    		app(PermissionController::class)->isAdmin($request->user()->role)){
 	        Shows::destroy($id);
 
 	        return response()->json(["status" => 'Deleted'], 200);

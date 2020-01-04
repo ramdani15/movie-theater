@@ -25,6 +25,7 @@ Route::group(['middleware' => ['jwt.verify']], function(){
 	Route::get('/user', 'UserController@index');
 	Route::get('/user/{id}', 'UserController@show');
 	Route::put('/user/{id}', 'UserController@edit');
+	Route::delete('/user/{id}', 'UserController@destroy');
 
 	Route::get('/movie', 'MovieController@index');
 	Route::post('/movie', 'MovieController@store');

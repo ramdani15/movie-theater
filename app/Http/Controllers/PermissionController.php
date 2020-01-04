@@ -8,6 +8,13 @@ use App\User;
 
 class PermissionController extends Controller
 {
+    public function isSuper($role) {
+        if($role == 'super'){
+            return true;
+        }
+        return false;
+    }
+
     public function isAdmin($role){
     	if($role == 'admin'){
     		return true;
@@ -30,7 +37,7 @@ class PermissionController extends Controller
     }
 
     public function addShows($role){
-    	if(Self::isAdmin($role) || Self::isStaff($role)){
+    	if(Self::isSuper($role) || Self::isAdmin($role) || Self::isStaff($role)){
     		return true;
     	}
     	return false;
@@ -40,7 +47,9 @@ class PermissionController extends Controller
         $user = User::find($user_id);
         $owner = User::where('username', $username)->first();
         if($user != null || $owner != null){
-            if(Self::isCustomer($user->role)){
+            if(Self::isSuper($owner->role)){
+                return true;
+            } else if(Self::isCustomer($user->role)){
                 if(Self::addShows($owner->role) || $user->_id == $owner->_id){
                     return true;
                 }

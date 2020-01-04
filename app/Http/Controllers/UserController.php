@@ -13,10 +13,13 @@ use App\User;
 class UserController extends Controller
 {
     public function index(Request $request){
-        if(app(PermissionController::class)->isAdmin($request->user()->role)){
+        if(app(PermissionController::class)->isSuper($request->user()->role)){
             $user = User::all();
+        } else if(app(PermissionController::class)->isAdmin($request->user()->role)){
+            $user = User::where('role', '!=', 'super')->get();
         } else if(app(PermissionController::class)->isStaff($request->user()->role)){
-            $user = User::where('role', '!=', 'admin')->get();
+            $user = User::where('role', '!=', 'admin')
+                        ->where('role', '!=', 'super')->get();
         } else {
             $user = User::find($request->user()->_id);
         }
@@ -24,7 +27,8 @@ class UserController extends Controller
     }
 
     public function show(Request $request, $id){
-        if(app(PermissionController::class)->isAdmin($request->user()->role)){
+        if(app(PermissionController::class)->isSuper($request->user()->role) ||
+            app(PermissionController::class)->isAdmin($request->user()->role)){
             $user = User::find($id);
         } else if(app(PermissionController::class)->isStaff($request->user()->role)){
             $user = User::where('_id', $id)
@@ -73,6 +77,15 @@ class UserController extends Controller
             $user = User::find($id);
 
             return $user;
+        }
+        return response()->json(["status" => 'You don\'t have permission'], 403);
+    }
+
+    public function destroy(Request $request, $id){
+        if(app(PermissionController::class)->usersPermission($request->user()->username, $id)){
+            User::destroy($id);
+
+            return response()->json(["status" => 'Deleted'], 200);
         }
         return response()->json(["status" => 'You don\'t have permission'], 403);
     }
