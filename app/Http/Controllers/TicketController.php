@@ -33,7 +33,6 @@ class TicketController extends Controller
 	        }
 
 	        $show = Shows::find($request->show_id);
-
 	        // check seat
 	        $seat = Seats::where('_id', $request->seat_id)
 	        			 ->where('hall_id', $show->hall_id)->get();
@@ -45,7 +44,7 @@ class TicketController extends Controller
 	        $ticket = Tickets::where('show_id', $request->show_id)
 	        				->where('seat_id', $request->seat_id)->get();
 	        if(!$ticket->isEmpty()){
-	        	return response()->json(["status" => "Already Booked"], 400);
+	        	return response()->json(["status" => "Ticket Already Exists"], 400);
 	        }
 
 	        $ticket = Tickets::create([
@@ -80,6 +79,22 @@ class TicketController extends Controller
 
 	        if($validator->fails()){
 	            return response()->json($validator->errors()->toJson(), 400);
+	        }
+
+	        $show = Shows::find($request->show_id);
+	        // check seat
+	        $seat = Seats::where('_id', $request->seat_id)
+	        			 ->where('hall_id', $show->hall_id)->get();
+	        if($seat->isEmpty()){
+	        	return response()->json(["status" => "Invalid Seat"], 400);
+	        }
+
+	        // exist ticket
+	        $ticket = Tickets::where('_id', '!=', $id)
+	        				 ->where('show_id', $request->show_id)
+	        				 ->where('seat_id', $request->seat_id)->get();
+	        if(!$ticket->isEmpty()){
+	        	return response()->json(["status" => "Ticket Already Exists"], 400);
 	        }
 
 	        Tickets::where('_id', $id)->update([
