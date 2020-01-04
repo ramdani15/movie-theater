@@ -59,7 +59,7 @@ class UserController extends Controller
                                 ->orWhere('email', $email);
                           })->get();
             if(!$user->isEmpty()){
-                return response()->json(['status' => 'Username or Email exist'], 400);
+                return response()->json(['status' => 'Username or Email Exists'], 400);
             }
 
             User::where('_id', $id)->update([
@@ -115,7 +115,7 @@ class UserController extends Controller
         $user = User::where('username', $request->username)
                     ->orWhere('email', $request->email)->get();
         if(!$user->isEmpty()){
-            return response()->json(['status' => 'Username or Email exist'], 400);
+            return response()->json(['status' => 'Username or Email Exists'], 400);
         }
 
         $user = User::create([
