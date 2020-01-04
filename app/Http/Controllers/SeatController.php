@@ -24,12 +24,12 @@ class SeatController extends Controller
 	            return response()->json($validator->errors()->toJson(), 400);
 	        }
 
-	        $hall = Seats::create([
+	        $seat = Seats::create([
 	        	"code" => $request->code,
 	        	"hall_id" => $request->hall_id,
 	        ]);
 
-	        return $hall;
+	        return $seat;
     	}
     	return response()->json(["status" => 'You don\'t have permission'], 403);
     }
