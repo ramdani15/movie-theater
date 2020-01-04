@@ -71,7 +71,7 @@ class TicketController extends Controller
     }
 
     public function edit(Request $request, $id){
-    	if(app(PermissionController::class)->isAdmin($request->user()->role)){
+    	if(app(PermissionController::class)->addShows($request->user()->role)){
     		$validator = Validator::make($request->all(), [
 	            'show_id' => 'required|string',
 	            'seat_id' => 'required|string',
@@ -86,7 +86,6 @@ class TicketController extends Controller
 	        	"show_id" => $request->show_id,
 	        	"seat_id" => $request->seat_id,
 	        	"customer_id" => $request->customer_id,
-	        	"created_by" => $request->user()->username,
 	        ]);
 
 	        return Tickets::find($id);
