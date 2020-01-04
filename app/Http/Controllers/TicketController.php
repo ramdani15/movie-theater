@@ -33,10 +33,19 @@ class TicketController extends Controller
 	        }
 
 	        $show = Shows::find($request->show_id);
+
+	        // check seat
 	        $seat = Seats::where('_id', $request->seat_id)
 	        			 ->where('hall_id', $show->hall_id)->get();
 	        if($seat->isEmpty()){
 	        	return response()->json(["status" => "Invalid Seat"], 400);
+	        }
+
+	        // exist ticket
+	        $ticket = Tickets::where('show_id', $request->show_id)
+	        				->where('seat_id', $request->seat_id)->get();
+	        if(!$ticket->isEmpty()){
+	        	return response()->json(["status" => "Already Booked"], 400);
 	        }
 
 	        $ticket = Tickets::create([
