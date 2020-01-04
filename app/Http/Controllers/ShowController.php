@@ -30,6 +30,14 @@ class ShowController extends Controller
 	            return response()->json($validator->errors()->toJson(), 400);
 	        }
 
+	        // exists show
+	        $show = Shows::where('date', $request->date)
+	        			 ->where('hall_id', $request->hall_id)
+	        			 ->where('start_time', $request->start_time)->get();
+	        if(!$show->isEmpty()){
+                return response()->json(['status' => 'Show Already Exists'], 400);
+            }
+
 	        $show = Shows::create([
 	        	"date" => $request->date,
 	        	"start_time" => $request->start_time,
@@ -61,6 +69,15 @@ class ShowController extends Controller
 	        if($validator->fails()){
 	            return response()->json($validator->errors()->toJson(), 400);
 	        }
+
+	        // exists show
+	        $show = Shows::where('_id', '!=', $id)
+	        			 ->where('date', $request->date)
+	        			 ->where('hall_id', $request->hall_id)
+	        			 ->where('start_time', $request->start_time)->get();
+	        if(!$show->isEmpty()){
+                return response()->json(['status' => 'Show Already Exists'], 400);
+            }
 
 	        Shows::where('_id', $id)->update([
 	        	"date" => $request->date,
