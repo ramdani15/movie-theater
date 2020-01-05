@@ -47,7 +47,7 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255',
                 'password' => 'required|string',
-                'role' => 'required|string',
+                'role' => 'required|string|in:super,admin,staff,customer',
             ]);
 
             if($validator->fails()){
@@ -117,7 +117,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'password' => 'required|string',
-            'role' => 'required|string',
+            'role' => 'required|string|in:super,admin,staff,customer',
         ]);
 
         if($validator->fails()){
