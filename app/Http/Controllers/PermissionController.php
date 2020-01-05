@@ -48,7 +48,9 @@ class PermissionController extends Controller
         $owner = User::where('username', $username)->first();
         if($user != null || $owner != null){
             if(Self::isSuper($owner->role)){
-                return true;
+                if($user->_id != $owner->_id){
+                    return true;
+                }
             } else if(Self::isCustomer($user->role)){
                 if(Self::addShows($owner->role) || $user->_id == $owner->_id){
                     return true;
