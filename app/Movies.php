@@ -11,6 +11,6 @@ class Movies extends Eloquent
     protected $collection = 'movies';
 
     protected $fillable = [
-    	'title', 'genre',
+    	'title', 'genre', 'year',
     ];
 }

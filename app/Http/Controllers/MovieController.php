@@ -19,6 +19,7 @@ class MovieController extends Controller
     		$validator = Validator::make($request->all(), [
 	            'title' => 'required|string|max:255',
 	            'genre' => 'required|string|max:255',
+	            'year' => 'required|digits:4|integer|min:1900|max:'.(date('Y')),
 	        ]);
 
 	        if($validator->fails()){
@@ -28,6 +29,7 @@ class MovieController extends Controller
 	        $movie = Movies::create([
 	        	"title" => $request->title,
 	        	"genre" => $request->genre,
+	        	"year" => $request->year,
 	        ]);
 
 	        return $movie;
@@ -45,6 +47,7 @@ class MovieController extends Controller
     		$validator = Validator::make($request->all(), [
 	            'title' => 'required|string|max:255',
 	            'genre' => 'required|string|max:255',
+	            'year' => 'required|digits:4|integer|min:1900|max:'.(date('Y')),
 	        ]);
 
 	        if($validator->fails()){
@@ -54,6 +57,7 @@ class MovieController extends Controller
 	        Movies::where('_id', $id)->update([
 	        	"title" => $request->title,
 	        	"genre" => $request->genre,
+	        	"year" => $request->year,
 	        ]);
 
 	        return Movies::find($id);
