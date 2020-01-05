@@ -1,2 +1,2 @@
 ## About
-Rest API using Larvel and MongoDB
+REST API for Movie Theater with Larvel and MongoDB
